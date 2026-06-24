@@ -105,7 +105,7 @@ h1 {
   display: block;
 }
 .celeb-ui {
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  position: absolute; left: 0; top: 60px; width: 100%;
   text-align: center; pointer-events: none; opacity: 0;
   transition: opacity 0.4s;
 }
@@ -383,7 +383,7 @@ function drawStar(ctx, cx, cy, r) {
 function isInsideGift(mx, my) {
   const dx = mx - giftGX;
   const dy = my - giftGY;
-  return Math.abs(dx) < 65 && dy > -45 && dy < 60;
+  return Math.abs(dx) < 65 && dy > -45 && dy < 75;
 }
 
 function celebrate() {
@@ -403,8 +403,8 @@ function celebrate() {
   envH = window.innerHeight;
   envCX = envW / 2;
   envCY = envH / 2 - 30;
-  giftGX = envW / 2 + 160;
-  giftGY = envH / 2 - 70;
+  giftGX = envW / 2;
+  giftGY = envH / 2;
   giftPos = { x: giftGX, y: giftGY };
 
   celebCanvas.width = envW;
@@ -562,8 +562,8 @@ function celebrate() {
     }
 
     // ---- Gift Box ----
+    giftPulse += 0.03;
     if (!giftOpened) {
-      giftPulse += 0.03;
       const scale = 1 + Math.sin(giftPulse) * 0.04;
       // Emoji
       ctx.save();
@@ -598,10 +598,15 @@ function celebrate() {
         ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 2 * Math.PI); ctx.fill();
       }
       ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+      // Scale pulse on the revealed gift
+      const revealScale = 1 + Math.sin(giftPulse * 0.6) * 0.05;
+      ctx.save();
+      ctx.translate(giftGX, giftGY);
+      ctx.scale(revealScale, revealScale);
       // Circle background
       const pulseR = 50 + Math.sin(ringPulse * 2) * 2;
       ctx.shadowColor = r.bgColor; ctx.shadowBlur = 30;
-      ctx.beginPath(); ctx.arc(giftGX, giftGY, pulseR, 0, 2 * Math.PI);
+      ctx.beginPath(); ctx.arc(0, 0, pulseR, 0, 2 * Math.PI);
       ctx.fillStyle = r.bgColor; ctx.fill();
       ctx.strokeStyle = 'white'; ctx.lineWidth = 4; ctx.stroke();
       ctx.shadowBlur = 0;
@@ -609,15 +614,16 @@ function celebrate() {
       ctx.font = '60px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 15;
-      ctx.fillText(r.emoji, giftGX, giftGY);
+      ctx.fillText(r.emoji, 0, 0);
       ctx.shadowBlur = 0;
-      // "You got a..." text
+      ctx.restore();
+      // "You got a..." text (not scaled, just bounces)
       ctx.save();
       const bounceY = Math.sin(ringPulse * 3) * 3;
       ctx.font = 'bold 14px "Segoe UI", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillStyle = r.bgColor; ctx.shadowColor = r.bgColor; ctx.shadowBlur = 10;
-      ctx.fillText('You got a ' + r.emoji + '!', giftGX, giftGY + 62 + bounceY);
+      ctx.fillText('You got a ' + r.emoji + '!', giftGX, giftGY + 68 + bounceY);
       ctx.shadowBlur = 0; ctx.restore();
     }
 
