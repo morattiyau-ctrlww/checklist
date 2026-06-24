@@ -35,14 +35,14 @@ h1 {
 }
 #progress-fill {
   height: 100%; border-radius: 4px;
-  background: #f39c12; transition: none;
+  background: linear-gradient(90deg, #f39c12, #f1c40f);
   width: 0%;
 }
-#progress-fill.p40 { background: #2ecc71; }
-#progress-fill.p75 { background: #27ae60; }
+#progress-fill.p40 { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+#progress-fill.p75 { background: linear-gradient(90deg, #27ae60, #1e8449); }
 #progress-shine {
-  position: absolute; top: 0; height: 100%; width: 20px;
-  background: rgba(255,255,255,0.35);
+  position: absolute; top: 0; height: 100%; width: 30px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
   display: none;
 }
 #progress-text {
@@ -109,7 +109,12 @@ h1 {
 .celeb-ui.active { pointer-events: auto; }
 .celeb-ui h2 {
   font-size: 32px; font-weight: 700; margin-bottom: 4px;
-  transition: color 0.2s;
+  text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+  animation: textPulse 1.5s ease-in-out infinite;
+}
+@keyframes textPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 .celeb-ui p { font-size: 14px; color: #636e72; margin-bottom: 12px; }
 .celeb-ui button {
@@ -150,7 +155,7 @@ h1 {
 </div>
 
 <script>
-const CONFETTI_COLORS = ["#ff6b6b","#feca57","#48dbfb","#ff9ff3","#54a0ff","#5f27cd","#01a3a4","#ff6348"];
+const CONFETTI_COLORS = ["#ff6b6b","#feca57","#48dbfb","#ff9ff3","#54a0ff","#5f27cd","#01a3a4","#ff6348","#00b894","#fd79a8"];
 const GIFTS = ["🍎","🍊","🍬","🍪","🧁","🍫","🍩","🍭","🎁","🌟"];
 const DEFAULT_ITEMS = ["1) Find the property","2) Find area and bldg age","3) Market price","4) Data entry","5) Reply"];
 
@@ -334,22 +339,26 @@ function drawProgressBar() {
   progressText.textContent = Math.round(pct) + '%';
 }
 
+let shineAnimId = null;
 function animateProgressShine() {
   if (progressCurrent > 5 && !celebrating) {
-    const fillPx = (progressCurrent / 100) * progressFill.parentElement.offsetWidth;
-    shinePos += 4;
-    if (shinePos > fillPx) shinePos = -30;
-    if (shinePos > -15 && shinePos + 2 < fillPx - 2) {
-      progressShine.style.display = 'block';
-      progressShine.style.left = shinePos + 'px';
-    } else {
-      progressShine.style.display = 'none';
+    const pBar = progressFill.parentElement;
+    if (pBar) {
+      const fillPx = (progressCurrent / 100) * pBar.offsetWidth;
+      shinePos += 4;
+      if (shinePos > fillPx) shinePos = -30;
+      if (shinePos > -15 && shinePos + 2 < fillPx - 2) {
+        progressShine.style.display = 'block';
+        progressShine.style.left = shinePos + 'px';
+      } else {
+        progressShine.style.display = 'none';
+      }
     }
   } else {
     shinePos = -30;
     progressShine.style.display = 'none';
   }
-  setTimeout(animateProgressShine, 60);
+  shineAnimId = setTimeout(animateProgressShine, 40);
 }
 
 // ---- Celebration ----
@@ -358,242 +367,387 @@ function checkAllDone() {
   if (items.every(i => i.cb.checked)) celebrate();
 }
 
+// State for celebration effects
+let confetti = [];
+let ringAngle = 0;
+let ringPulse = 0;
+let fireworkBursts = [];
+let sparkles = [];
+let colorIdx = 0;
+let giftRevealed = null;
+let giftBurst = [];
+let giftPulse = 0;
+let envW = 0, envH = 0, envCX = 0, envCY = 0;
+let giftGX = 0, giftGY = 0;
+
+const colorTextColors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6'];
+
+function drawStar(ctx, cx, cy, r) {
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const a = (i * 4 * Math.PI / 5) - Math.PI / 2;
+    const method = i === 0 ? 'moveTo' : 'lineTo';
+    ctx[method](cx + r * Math.cos(a), cy + r * Math.sin(a));
+  }
+  ctx.closePath();
+}
+
 function celebrate() {
   celebrating = true;
   celebrationEl.classList.add('active');
   celebUi.classList.add('active');
   giftOpened = false;
+  giftRevealed = null;
+  giftBurst = [];
+  ringAngle = 0;
+  ringPulse = 0;
+  colorIdx = 0;
 
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  celebCanvas.width = w;
-  celebCanvas.height = h;
+  envW = window.innerWidth;
+  envH = window.innerHeight;
+  envCX = envW / 2;
+  envCY = envH / 2 - 30;
+  giftGX = envW / 2 + 130;
+  giftGY = envH / 2 - 60;
+  giftPos = { x: giftGX, y: giftGY };
 
-  // Confetti particles
-  const particles = [];
-  for (let i = 0; i < 120; i++) {
-    particles.push({
-      x: Math.random() * w, y: Math.random() * -h,
-      w: 5 + Math.random() * 5, h: 5 + Math.random() * 5,
-      dx: (Math.random() - 0.5) * 3, dy: 1 + Math.random() * 3,
-      gravity: 0.05 + Math.random() * 0.1, color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-      rect: Math.random() > 0.5,
+  celebCanvas.width = envW;
+  celebCanvas.height = envH;
+
+  // Confetti: 200 particles with rotation
+  confetti = [];
+  for (let i = 0; i < 200; i++) {
+    confetti.push({
+      x: Math.random() * envW,
+      y: Math.random() * -envH,
+      w: 4 + Math.random() * 6,
+      h: 6 + Math.random() * 8,
+      dx: (Math.random() - 0.5) * 3,
+      dy: 0.8 + Math.random() * 2.5,
+      gravity: 0.04 + Math.random() * 0.08,
+      rot: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 8,
+      color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+      shape: Math.random() < 0.3 ? 'star' : (Math.random() < 0.5 ? 'rect' : 'circle'),
+      wind: (Math.random() - 0.5) * 0.3,
     });
   }
 
   // Ring layers
   const ringLayers = [
-    { count: 8, radius: 65, speed: 15, c1: '#feca57', c2: '#e67e22' },
-    { count: 12, radius: 100, speed: -10, c1: '#ff9ff3', c2: '#e84393' },
-    { count: 6, radius: 135, speed: 20, c1: '#48dbfb', c2: '#0abde3' },
+    { count: 10, radius: 65, speed: 18, c1: '#feca57', c2: '#e67e22', sz1: 6, sz2: 4 },
+    { count: 14, radius: 100, speed: -12, c1: '#ff9ff3', c2: '#e84393', sz1: 5, sz2: 3 },
+    { count: 8, radius: 135, speed: 22, c1: '#48dbfb', c2: '#0abde3', sz1: 7, sz2: 4 },
   ];
 
-  const cx = w / 2, cy = h / 2 - 30;
-
-  // Fireworks
-  const fireworkBursts = [];
-  let sparkles = [];
-  let ringAngle = 0;
-  let colorIdx = 0;
-  const colorTextColors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6'];
+  fireworkBursts = [];
+  sparkles = [];
 
   function spawnFirework() {
     if (!celebrating) return;
-    const bx = 60 + Math.random() * (w - 120);
-    const by = 60 + Math.random() * (h - 120);
+    const bx = 60 + Math.random() * (envW - 120);
+    const by = 60 + Math.random() * (envH - 120);
+    const n = 20 + Math.floor(Math.random() * 15);
+    const color = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
     const burst = [];
-    const n = 12 + Math.floor(Math.random() * 9);
     for (let i = 0; i < n; i++) {
       const a = Math.random() * 360;
-      const spd = 2 + Math.random() * 4;
+      const spd = 2 + Math.random() * 5;
       burst.push({
         x: bx, y: by, dx: spd * Math.cos(a * Math.PI / 180), dy: spd * Math.sin(a * Math.PI / 180),
-        life: 40, color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-        sz: 3 + Math.random() * 3,
+        life: 40 + Math.floor(Math.random() * 15),
+        maxLife: 50, color, sz: 2 + Math.random() * 3,
+        trail: [],
+        hueShift: (Math.random() - 0.5) * 40,
+      });
+    }
+    // Secondary crackle sparks
+    for (let i = 0; i < 10; i++) {
+      const a = Math.random() * 360;
+      const spd = 4 + Math.random() * 4;
+      burst.push({
+        x: bx, y: by, dx: spd * Math.cos(a * Math.PI / 180), dy: spd * Math.sin(a * Math.PI / 180),
+        life: 15 + Math.floor(Math.random() * 10),
+        maxLife: 25, color: '#ffffff', sz: 1 + Math.random() * 2,
+        trail: [], hueShift: 0, spark: true,
       });
     }
     fireworkBursts.push(burst);
-    timers.push(setTimeout(spawnFirework, 500 + Math.random() * 500));
+    timers.push(setTimeout(spawnFirework, 600 + Math.random() * 800));
   }
 
   spawnFirework();
 
-  const cx2 = w / 2 + 130;
-  const cy2 = h / 2 - 60;
-  giftPos = { x: cx2, y: cy2 };
+  // Sparkle stars
+  for (let i = 0; i < 8; i++) {
+    sparkles.push(createSparkle());
+  }
 
-  let labelPulseColors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6','#e74c3c'];
-  let labelPulseIdx = 0;
+  function createSparkle() {
+    return {
+      x: 20 + Math.random() * (envW - 40),
+      y: 20 + Math.random() * (envH - 40),
+      sz: 8 + Math.random() * 14,
+      life: 0, maxLife: 30 + Math.floor(Math.random() * 30),
+      phase: Math.random() * 360,
+      color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+    };
+  }
 
   function render() {
     if (!celebrating) return;
-    ctx.clearRect(0, 0, w, h);
+    ctx.clearRect(0, 0, envW, envH);
 
-    // Confetti
-    for (const p of particles) {
-      p.x += p.dx; p.y += p.dy; p.dy += p.gravity; p.dx *= 0.995;
-      if (p.y > h + 20) {
-        p.x = Math.random() * w; p.y = -20;
-        p.dy = 1 + Math.random() * 3; p.dx = (Math.random() - 0.5) * 3;
-        p.gravity = 0.05 + Math.random() * 0.1;
+    // ---- Confetti ----
+    for (const p of confetti) {
+      p.x += p.dx + p.wind;
+      p.y += p.dy;
+      p.dy += p.gravity;
+      p.dx *= 0.995;
+      p.rot += p.rotSpeed;
+      if (p.y > envH + 20) {
+        p.x = Math.random() * envW; p.y = -20;
+        p.dy = 0.8 + Math.random() * 2.5;
+        p.dx = (Math.random() - 0.5) * 3;
+        p.gravity = 0.04 + Math.random() * 0.08;
+        p.rot = Math.random() * 360;
       }
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.globalAlpha = 0.85;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 6;
       ctx.fillStyle = p.color;
-      if (p.rect) {
-        ctx.fillRect(p.x, p.y, p.w, p.h * 1.5);
+      if (p.shape === 'rect') {
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      } else if (p.shape === 'star') {
+        drawStar(ctx, 0, 0, p.w);
+        ctx.fill();
       } else {
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.w / 2, 0, 2 * Math.PI); ctx.fill();
+        ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, 2 * Math.PI); ctx.fill();
       }
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+      ctx.restore();
     }
 
-    // Rings
+    // ---- Rings with glow ----
+    ctx.globalAlpha = 0.9;
     for (const layer of ringLayers) {
       for (let i = 0; i < layer.count; i++) {
         const a = (ringAngle * layer.speed / 15 + (360 / layer.count) * i) * Math.PI / 180;
-        const rx = cx + layer.radius * Math.cos(a);
-        const ry = cy + layer.radius * Math.sin(a);
-        ctx.fillStyle = i % 2 === 0 ? layer.c1 : layer.c2;
-        const sz = i % 2 === 0 ? 5 : 3;
-        ctx.beginPath(); ctx.arc(rx, ry, sz, 0, 2 * Math.PI); ctx.fill();
+        const rx = envCX + layer.radius * Math.cos(a);
+        const ry = envCY + layer.radius * Math.sin(a);
+        const isEven = i % 2 === 0;
+        const color = isEven ? layer.c1 : layer.c2;
+        const sz = (isEven ? layer.sz1 : layer.sz2) + Math.sin(ringPulse + i) * 1.5;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(rx, ry, Math.max(sz, 1), 0, 2 * Math.PI); ctx.fill();
       }
     }
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
     ringAngle += 1;
+    ringPulse += 0.03;
 
-    // Fireworks
+    // ---- Fireworks ----
     for (let bi = fireworkBursts.length - 1; bi >= 0; bi--) {
       const burst = fireworkBursts[bi];
       for (let pi = burst.length - 1; pi >= 0; pi--) {
         const p = burst[pi];
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 5) p.trail.shift();
         p.x += p.dx; p.y += p.dy;
         p.dx *= 0.96; p.dy *= 0.96;
         p.life--;
+        const progress = 1 - p.life / p.maxLife;
         if (p.life <= 0) { burst.splice(pi, 1); continue; }
-        ctx.fillStyle = p.color;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 2 * Math.PI); ctx.fill();
+        // Trail
+        for (let ti = 0; ti < p.trail.length; ti++) {
+          const t = p.trail[ti];
+          const alpha = (ti / p.trail.length) * 0.5;
+          ctx.globalAlpha = alpha;
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = p.spark ? '#ffffff' : p.color;
+          ctx.beginPath(); ctx.arc(t.x, t.y, p.sz * 0.5, 0, 2 * Math.PI); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = p.spark ? 4 : 10;
+        ctx.fillStyle = p.spark ? '#ffffff' : p.color;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.sz * (1 - progress * 0.4), 0, 2 * Math.PI); ctx.fill();
       }
       if (burst.length === 0) fireworkBursts.splice(bi, 1);
     }
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
 
-    // Sparkles
-    sparkles = [];
-    for (let i = 0; i < 5; i++) {
-      const sx = 20 + Math.random() * (w - 40);
-      const sy = 20 + Math.random() * (h - 40);
-      sparkles.push({ x: sx, y: sy, color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)], sz: 10 + Math.random() * 8 });
+    // ---- Sparkles (twinkling 4-point stars) ----
+    for (let si = sparkles.length - 1; si >= 0; si--) {
+      const s = sparkles[si];
+      s.life++;
+      if (s.life > s.maxLife) {
+        sparkles.splice(si, 1);
+        sparkles.push(createSparkle());
+        continue;
+      }
+      const alpha = Math.sin(s.life * 0.15 + s.phase) * 0.5 + 0.5;
+      ctx.save();
+      ctx.translate(s.x, s.y);
+      ctx.globalAlpha = alpha * 0.85;
+      ctx.shadowColor = s.color;
+      ctx.shadowBlur = 12;
+      ctx.fillStyle = s.color;
+      // 4-point star
+      const r = s.sz;
+      ctx.beginPath();
+      for (let i = 0; i < 4; i++) {
+        const a = (i * Math.PI / 2) - Math.PI / 2;
+        const ax = r * Math.cos(a);
+        const ay = r * Math.sin(a);
+        if (i === 0) ctx.moveTo(ax, ay);
+        else ctx.lineTo(ax, ay);
+        const innerA = a + Math.PI / 4;
+        ctx.lineTo(r * 0.3 * Math.cos(innerA), r * 0.3 * Math.sin(innerA));
+      }
+      ctx.closePath(); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+      ctx.restore();
     }
 
-    // Gift
+    // ---- Gift ----
     if (!giftOpened) {
-      // Gift box
+      giftPulse += 0.04;
+      const scale = 1 + Math.sin(giftPulse) * 0.04;
+      ctx.save();
+      ctx.translate(giftGX, giftGY);
+      ctx.scale(scale, scale);
+      ctx.shadowColor = '#f39c12';
+      ctx.shadowBlur = 20;
       ctx.font = '64px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillStyle = '#f39c12';
-      ctx.fillText('🎁', cx2, cy2);
+      ctx.fillText('🎁', 0, 0);
+      ctx.shadowBlur = 0;
+      ctx.restore();
 
-      // BG pill
+      // BG pill with glow
+      ctx.save();
+      ctx.shadowColor = '#2d3436';
+      ctx.shadowBlur = 8;
       ctx.fillStyle = '#2d3436';
-      const rx = cx2 - 65, ry = cy2 + 32, rw = 130, rh = 26;
-      ctx.beginPath(); ctx.roundRect(rx, ry, rw, rh, 13); ctx.fill();
+      const rrx = giftGX - 65, rry = giftGY + 32, rrw = 130, rrh = 26;
+      ctx.beginPath(); ctx.roundRect(rrx, rry, rrw, rrh, 13); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.restore();
 
-      // Label
+      // Label with pulse color
       ctx.font = 'bold 11px "Segoe UI", sans-serif';
-      ctx.fillStyle = labelPulseColors[labelPulseIdx % labelPulseColors.length];
-      ctx.fillText('CLICK TO OPEN', cx2, cy2 + 45);
-      labelPulseIdx++;
-    }
-
-    // Draw sparkles on top
-    for (const s of sparkles) {
-      ctx.font = `bold ${s.sz}px "Segoe UI", sans-serif`;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = s.color;
-      ctx.fillText('*', s.x, s.y);
+      ctx.fillStyle = colorTextColors[Math.floor(Math.random() * colorTextColors.length)];
+      ctx.fillText('CLICK TO OPEN', giftGX, giftGY + 45);
+    } else if (giftRevealed) {
+      const r = giftRevealed;
+      // Burst particles
+      for (let pi = giftBurst.length - 1; pi >= 0; pi--) {
+        const p = giftBurst[pi];
+        p.x += p.dx; p.y += p.dy;
+        p.dx *= 0.94; p.dy *= 0.94;
+        p.life--;
+        if (p.life <= 0) { giftBurst.splice(pi, 1); continue; }
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 6;
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life / 35;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 2 * Math.PI); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+
+      // Revealed circle with glow
+      const pulseR = 45 + Math.sin(ringPulse * 2) * 2;
+      ctx.shadowColor = r.bgColor;
+      ctx.shadowBlur = 25;
+      ctx.beginPath(); ctx.arc(giftGX, giftGY, pulseR, 0, 2 * Math.PI);
+      ctx.fillStyle = r.bgColor;
+      ctx.fill();
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Gift emoji
+      ctx.font = '56px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#ffffff';
+      ctx.shadowBlur = 15;
+      ctx.fillText(r.emoji, giftGX, giftGY);
+      ctx.shadowBlur = 0;
+
+      // "You got a..." text
+      ctx.save();
+      const bounceY = Math.sin(ringPulse * 3) * 3;
+      ctx.font = 'bold 13px "Segoe UI", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = r.bgColor;
+      ctx.shadowColor = r.bgColor;
+      ctx.shadowBlur = 10;
+      ctx.fillText('You got a ' + r.emoji + '!', giftGX, giftGY + 55 + bounceY);
+      ctx.shadowBlur = 0;
+      ctx.restore();
     }
 
-    // Celebrate text color cycling
+    // ---- Text color cycling ----
     allDoneText.style.color = colorTextColors[colorIdx % colorTextColors.length];
+    colorIdx = (colorIdx + 1) % colorTextColors.length;
 
     animFrameId = requestAnimationFrame(render);
   }
 
   render();
 
-  // Text color cycling timer
-  const textColorTimer = setInterval(() => {
-    if (!celebrating) { clearInterval(textColorTimer); return; }
-    colorIdx++;
-  }, 200);
-  timers.push(textColorTimer);
-
   // Auto reset after 30s
   const autoResetTimer = setTimeout(resetAll, 30000);
   timers.push(autoResetTimer);
-
-  // Store particles and state for cleanup
-  celebrationEl._particles = particles;
-  celebrationEl._fwBursts = fireworkBursts;
-  celebrationEl._textColorTimer = textColorTimer;
 }
 
 // ---- Gift click handling ----
 celebCanvas.addEventListener('click', (e) => {
-  if (!celebrating || giftOpened) return;
-  const rect = celebCanvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
+  if (!celebrating || giftOpened || !giftPos) return;
+  const mx = e.offsetX;
+  const my = e.offsetY;
   const dx = mx - giftPos.x;
   const dy = my - giftPos.y;
-  if (Math.abs(dx) < 50 && Math.abs(dy) < 50) openGift();
+  // Check within the gift area: emoji (~35px radius) + label area (~55px down)
+  if (Math.abs(dx) < 45 && dy > -40 && dy < 55) openGift();
 });
 
 function openGift() {
   giftOpened = true;
   const gx = giftPos.x, gy = giftPos.y;
-  const gift = GIFTS[Math.floor(Math.random() * GIFTS.length)];
+  const emoji = GIFTS[Math.floor(Math.random() * GIFTS.length)];
   const bgColor = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
 
+  giftRevealed = { emoji, bgColor };
+
   // Burst particles
-  const burstParticles = [];
-  for (let i = 0; i < 25; i++) {
+  giftBurst = [];
+  for (let i = 0; i < 35; i++) {
     const a = Math.random() * 360;
-    const spd = 3 + Math.random() * 5;
-    burstParticles.push({
-      x: gx, y: gy, dx: spd * Math.cos(a * Math.PI / 180), dy: spd * Math.sin(a * Math.PI / 180),
+    const spd = 3 + Math.random() * 6;
+    giftBurst.push({
+      x: gx, y: gy,
+      dx: spd * Math.cos(a * Math.PI / 180),
+      dy: spd * Math.sin(a * Math.PI / 180),
       life: 35, color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-      sz: 3 + Math.random() * 4,
+      sz: 2 + Math.random() * 4,
     });
   }
-
-  function animateBurst() {
-    let alive = false;
-    for (const p of burstParticles) {
-      if (p.life <= 0) continue;
-      alive = true;
-      p.x += p.dx; p.y += p.dy;
-      p.dx *= 0.94; p.dy *= 0.94;
-      p.life--;
-      ctx.fillStyle = p.color;
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 2 * Math.PI); ctx.fill();
-    }
-    if (alive) requestAnimationFrame(animateBurst);
-  }
-
-  // Draw burst overlay
-  setTimeout(() => {
-    // Revealed gift circle
-    ctx.beginPath(); ctx.arc(gx, gy, 45, 0, 2 * Math.PI);
-    ctx.fillStyle = bgColor; ctx.fill();
-    ctx.strokeStyle = 'white'; ctx.lineWidth = 3; ctx.stroke();
-
-    ctx.font = '56px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(gift, gx, gy);
-
-    ctx.font = 'bold 12px "Segoe UI", sans-serif';
-    ctx.fillStyle = bgColor;
-    ctx.fillText('You got a ' + gift + '!', gx, gy + 55);
-  }, 50);
-
-  animateBurst();
 }
 
 // ---- Reset ----
@@ -602,9 +756,15 @@ function resetAll() {
   celebrationEl.classList.remove('active');
   celebUi.classList.remove('active');
   if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+  if (shineAnimId) { clearTimeout(shineAnimId); shineAnimId = null; }
   for (const t of timers) { clearTimeout(t); clearInterval(t); }
   timers = [];
   ctx.clearRect(0, 0, celebCanvas.width, celebCanvas.height);
+  confetti = [];
+  fireworkBursts = [];
+  sparkles = [];
+  giftBurst = [];
+  giftRevealed = null;
   progressCurrent = 0; progressTarget = 0;
   for (const entry of items) {
     clearAnimTimers(entry);
