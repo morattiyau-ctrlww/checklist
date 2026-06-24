@@ -55,25 +55,25 @@ h1 {
   scrollbar-width: thin;
 }
 .item {
-  display: flex; align-items: center; padding: 5px 0;
+  display: flex; align-items: center; padding: 8px 0;
   background: #f8f9fa; transition: background 0.15s, color 0.15s;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 .item.anim-0 { background: #d4edda; }
 .item.anim-1 { background: #f8f9fa; }
 .item.anim-2 { background: #d4edda; }
 .item.anim-3 { background: #f8f9fa; color: #28a745; text-decoration: line-through; }
 .item label {
-  flex: 1; font-size: 16px; cursor: pointer;
-  display: flex; align-items: center; padding: 6px 8px;
-  user-select: none;
+  flex: 1; font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; padding: 8px 10px;
+  user-select: none; gap: 12px;
 }
 .item input[type="checkbox"] {
-  width: 20px; height: 20px; margin-right: 10px; cursor: pointer;
-  accent-color: #28a745;
+  width: 28px; height: 28px; margin: 0; cursor: pointer;
+  accent-color: #28a745; flex-shrink: 0;
 }
 .indicator {
-  width: 28px; height: 28px; flex-shrink: 0; margin-left: 6px;
+  width: 34px; height: 34px; flex-shrink: 0; margin-left: 8px;
   position: relative;
 }
 .indicator canvas { display: block; }
@@ -159,7 +159,7 @@ h1 {
 
 <script>
 const CONFETTI_COLORS = ["#ff6b6b","#feca57","#48dbfb","#ff9ff3","#54a0ff","#5f27cd","#01a3a4","#ff6348","#00b894","#fd79a8"];
-const GIFTS = ["🍎","🍊","🍬","🍪","🧁","🍫","🍩","🍭","🎁","🌟","🍰","🥧"];
+const GIFTS = ["🐱","🐶","🐼","🐨","🦊","🐰","🐻","🐸","🐵","🦄","🐥","🐝","🐞","🐌","🐢","🧸","🌈","⭐","🌺","🎈","🎀","💖","✨","🪄","🍭","🧁"];
 const DEFAULT_ITEMS = ["1) Find the property","2) Find area and bldg age","3) Market price","4) Data entry","5) Reply"];
 
 const listEl = document.getElementById('list');
@@ -203,7 +203,7 @@ function addCheckItem(text) {
   const indicator = document.createElement('div');
   indicator.className = 'indicator';
   const ic = document.createElement('canvas');
-  ic.width = 28; ic.height = 28;
+  ic.width = 34; ic.height = 34;
   indicator.appendChild(ic);
   div.appendChild(indicator);
   listEl.appendChild(div);
@@ -251,43 +251,43 @@ function animateIndicator(entry, step, loop) {
   if (!entry.cb.checked) { entry._indTimer = null; return; }
   const ic = entry.ic;
   const c2 = ic.getContext('2d');
-  c2.clearRect(0, 0, 28, 28);
+  c2.clearRect(0, 0, 34, 34);
   if (step === 0) {
-    c2.beginPath(); c2.arc(14,14,11,0,2*Math.PI);
+    c2.beginPath(); c2.arc(17,17,13,0,2*Math.PI);
+    c2.strokeStyle = '#e74c3c'; c2.lineWidth = 2.5; c2.stroke();
+    c2.beginPath(); c2.moveTo(10,17); c2.lineTo(24,17);
     c2.strokeStyle = '#e74c3c'; c2.lineWidth = 2; c2.stroke();
-    c2.beginPath(); c2.moveTo(8,14); c2.lineTo(20,14);
-    c2.strokeStyle = '#e74c3c'; c2.lineWidth = 1.5; c2.stroke();
-    c2.beginPath(); c2.moveTo(14,8); c2.lineTo(14,20);
+    c2.beginPath(); c2.moveTo(17,10); c2.lineTo(17,24);
     c2.stroke(); c2.closePath();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 1), 180);
   } else if (step === 1) {
-    c2.beginPath(); c2.arc(14,14,11,0,2*Math.PI);
-    c2.strokeStyle = '#e74c3c'; c2.lineWidth = 2; c2.stroke();
-    c2.beginPath(); c2.moveTo(5,5); c2.lineTo(23,23);
-    c2.strokeStyle = '#c0392b'; c2.lineWidth = 3; c2.lineCap = 'round'; c2.stroke();
+    c2.beginPath(); c2.arc(17,17,13,0,2*Math.PI);
+    c2.strokeStyle = '#e74c3c'; c2.lineWidth = 2.5; c2.stroke();
+    c2.beginPath(); c2.moveTo(6,6); c2.lineTo(28,28);
+    c2.strokeStyle = '#c0392b'; c2.lineWidth = 3.5; c2.lineCap = 'round'; c2.stroke();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 2), 150);
   } else if (step === 2) {
-    c2.beginPath(); c2.moveTo(23,5); c2.lineTo(5,23);
-    c2.strokeStyle = '#c0392b'; c2.lineWidth = 2.5; c2.lineCap = 'round'; c2.stroke();
-    c2.beginPath(); c2.moveTo(5,5); c2.lineTo(23,23);
-    c2.strokeStyle = '#c0392b'; c2.lineWidth = 2.5; c2.stroke();
+    c2.beginPath(); c2.moveTo(28,6); c2.lineTo(6,28);
+    c2.strokeStyle = '#c0392b'; c2.lineWidth = 3; c2.lineCap = 'round'; c2.stroke();
+    c2.beginPath(); c2.moveTo(6,6); c2.lineTo(28,28);
+    c2.strokeStyle = '#c0392b'; c2.lineWidth = 3; c2.stroke();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 3), 150);
   } else if (step === 3) {
-    c2.beginPath(); c2.arc(14,14,9,0,2*Math.PI);
+    c2.beginPath(); c2.arc(17,17,11,0,2*Math.PI);
     c2.fillStyle = '#f39c12'; c2.fill();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 4), 120);
   } else if (step === 4) {
-    c2.beginPath(); c2.arc(14,14,12,0,2*Math.PI);
+    c2.beginPath(); c2.arc(17,17,14,0,2*Math.PI);
     c2.fillStyle = '#28a745'; c2.fill();
-    c2.beginPath(); c2.moveTo(8,15); c2.lineTo(13,20); c2.lineTo(24,9);
-    c2.strokeStyle = 'white'; c2.lineWidth = 2.5; c2.lineCap = 'round'; c2.lineJoin = 'round'; c2.stroke();
+    c2.beginPath(); c2.moveTo(10,18); c2.lineTo(16,24); c2.lineTo(29,11);
+    c2.strokeStyle = 'white'; c2.lineWidth = 3; c2.lineCap = 'round'; c2.lineJoin = 'round'; c2.stroke();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 5, 0), 250);
   } else if (step === 5) {
-    const pad = loop % 2 === 0 ? 1 : 3;
-    c2.beginPath(); c2.arc(14,14,14-pad,0,2*Math.PI);
+    const pad = loop % 2 === 0 ? 2 : 4;
+    c2.beginPath(); c2.arc(17,17,17-pad,0,2*Math.PI);
     c2.fillStyle = '#28a745'; c2.fill();
-    c2.beginPath(); c2.moveTo(8,15); c2.lineTo(13,20); c2.lineTo(24,9);
-    c2.strokeStyle = 'white'; c2.lineWidth = 2.5; c2.lineCap = 'round'; c2.lineJoin = 'round'; c2.stroke();
+    c2.beginPath(); c2.moveTo(10,18); c2.lineTo(16,24); c2.lineTo(29,11);
+    c2.strokeStyle = 'white'; c2.lineWidth = 3; c2.lineCap = 'round'; c2.lineJoin = 'round'; c2.stroke();
     if (loop < 6) {
       entry._indTimer = setTimeout(() => animateIndicator(entry, 5, loop + 1), 200);
     }
@@ -687,7 +687,7 @@ function resetAll() {
     entry.div.className = 'item';
     entry.cb.style.accentColor = '#28a745';
     const c2 = entry.ic.getContext('2d');
-    c2.clearRect(0, 0, 28, 28);
+    c2.clearRect(0, 0, 34, 34);
   }
   updateProgress();
   drawProgressBar();
