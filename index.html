@@ -159,7 +159,11 @@ h1 {
 
 <script>
 const CONFETTI_COLORS = ["#ff6b6b","#feca57","#48dbfb","#ff9ff3","#54a0ff","#5f27cd","#01a3a4","#ff6348","#00b894","#fd79a8"];
-const GIFTS = ["🐱","🐶","🐼","🐨","🦊","🐰","🐻","🐸","🐵","🦄","🐥","🐝","🐞","🐌","🐢","🧸","🌈","⭐","🌺","🎈","🎀","💖","✨","🪄","🍭","🧁"];
+const GIFTS = ["🐱","🐶","🐼","🐨","🦊","🐰","🐻","🐸","🦄","🐥","🐝","🧸","🌈","⭐","🌺","🎈","🎀","💖","✨","🪄","🍭","🧁", "_heart","_star","_crown","_diamond","_flower","_butterfly"];
+const CUSTOM_GIFT_NAMES = {
+  _heart: "a heart 💕", _star: "a star ⭐", _crown: "a crown 👑",
+  _diamond: "a diamond 💎", _flower: "a flower 🌸", _butterfly: "a butterfly 🦋",
+};
 const DEFAULT_ITEMS = ["1) Find the property","2) Find area and bldg age","3) Market price","4) Data entry","5) Reply"];
 
 const listEl = document.getElementById('list');
@@ -380,10 +384,71 @@ function drawStar(ctx, cx, cy, r) {
   ctx.closePath();
 }
 
+function drawCustomGift(ctx, type, s) {
+  const s2 = s / 2;
+  if (type === '_heart') {
+    ctx.beginPath();
+    ctx.moveTo(0, s2 * 0.4);
+    ctx.bezierCurveTo(-s2, -s2 * 0.2, -s2 * 0.3, -s2 * 0.8, 0, -s2 * 0.3);
+    ctx.bezierCurveTo(s2 * 0.3, -s2 * 0.8, s2, -s2 * 0.2, 0, s2 * 0.4);
+    ctx.fill();
+  } else if (type === '_star') {
+    drawStar(ctx, 0, 0, s2);
+    ctx.fill();
+  } else if (type === '_crown') {
+    ctx.beginPath();
+    ctx.moveTo(-s2, s2 * 0.5);
+    ctx.lineTo(-s2 * 0.7, s2 * 0.5);
+    ctx.lineTo(-s2 * 0.7, -s2 * 0.3);
+    ctx.lineTo(-s2 * 0.35, 0);
+    ctx.lineTo(0, -s2 * 0.7);
+    ctx.lineTo(s2 * 0.35, 0);
+    ctx.lineTo(s2 * 0.7, -s2 * 0.3);
+    ctx.lineTo(s2 * 0.7, s2 * 0.5);
+    ctx.lineTo(s2, s2 * 0.5);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(-s2 * 0.35, -s2 * 0.05, s * 0.04, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, -s2 * 0.25, s * 0.05, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(s2 * 0.35, -s2 * 0.05, s * 0.04, 0, 2 * Math.PI); ctx.fill();
+  } else if (type === '_diamond') {
+    ctx.beginPath();
+    ctx.moveTo(0, -s2);
+    ctx.lineTo(s2 * 0.6, 0);
+    ctx.lineTo(0, s2);
+    ctx.lineTo(-s2 * 0.6, 0);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.moveTo(0, -s2); ctx.lineTo(0, s2); ctx.lineTo(-s2 * 0.6, 0); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.beginPath(); ctx.moveTo(0, -s2); ctx.lineTo(s2 * 0.6, 0); ctx.lineTo(0, s2 * 0.3); ctx.closePath(); ctx.fill();
+  } else if (type === '_flower') {
+    for (let i = 0; i < 6; i++) {
+      const a = (i * 60) * Math.PI / 180;
+      const px = Math.cos(a) * s2 * 0.55;
+      const py = Math.sin(a) * s2 * 0.55;
+      ctx.beginPath(); ctx.ellipse(px, py, s2 * 0.3, s2 * 0.5, a, 0, 2 * Math.PI); ctx.fill();
+    }
+    ctx.shadowBlur = 0; ctx.fillStyle = '#f9ca24';
+    ctx.beginPath(); ctx.arc(0, 0, s * 0.08, 0, 2 * Math.PI); ctx.fill();
+  } else if (type === '_butterfly') {
+    ctx.save(); ctx.rotate(-Math.PI / 6);
+    ctx.beginPath(); ctx.ellipse(-s2 * 0.4, -s2 * 0.3, s2 * 0.45, s2 * 0.6, -0.3, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(s2 * 0.4, -s2 * 0.3, s2 * 0.45, s2 * 0.6, 0.3, 0, 2 * Math.PI); ctx.fill();
+    ctx.shadowBlur = 0; ctx.globalAlpha = 0.5;
+    ctx.beginPath(); ctx.ellipse(-s2 * 0.25, s2 * 0.15, s2 * 0.25, s2 * 0.35, -0.2, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(s2 * 0.25, s2 * 0.15, s2 * 0.25, s2 * 0.35, 0.2, 0, 2 * Math.PI); ctx.fill();
+    ctx.globalAlpha = 1; ctx.restore();
+    ctx.shadowColor = '#fff'; ctx.shadowBlur = 8;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.ellipse(0, -s2 * 0.05, s * 0.06, s * 0.12, 0, 0, 2 * Math.PI); ctx.fill();
+  }
+}
+
 function isInsideGift(mx, my) {
   const dx = mx - giftGX;
   const dy = my - giftGY;
-  return Math.abs(dx) < 65 && dy > -45 && dy < 75;
+  return Math.abs(dx) < 140 && dy > -90 && dy < 150;
 }
 
 function celebrate() {
@@ -568,24 +633,24 @@ function celebrate() {
       // Emoji
       ctx.save();
       ctx.translate(giftGX, giftGY); ctx.scale(scale, scale);
-      ctx.shadowColor = '#f39c12'; ctx.shadowBlur = 25;
-      ctx.font = '72px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+      ctx.shadowColor = '#f39c12'; ctx.shadowBlur = 35;
+      ctx.font = '144px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillStyle = '#f39c12'; ctx.fillText('🎁', 0, 0);
       ctx.shadowBlur = 0; ctx.restore();
       // Label pill
       ctx.save();
-      ctx.shadowColor = '#2d3436'; ctx.shadowBlur = 8;
+      ctx.shadowColor = '#2d3436'; ctx.shadowBlur = 12;
       ctx.fillStyle = '#2d3436';
-      const rrx = giftGX - 75, rry = giftGY + 38, rrw = 150, rrh = 30;
-      ctx.beginPath(); ctx.roundRect(rrx, rry, rrw, rrh, 15); ctx.fill();
+      const rrx = giftGX - 150, rry = giftGY + 75, rrw = 300, rrh = 56;
+      ctx.beginPath(); ctx.roundRect(rrx, rry, rrw, rrh, 28); ctx.fill();
       ctx.shadowBlur = 0; ctx.restore();
       // Label text (pulse every 8 frames ~7fps)
       if (frameCount % 8 === 0) giftLabelColorIdx = (giftLabelColorIdx + 1) % labelPulseColors.length;
-      ctx.font = 'bold 13px "Segoe UI", sans-serif';
+      ctx.font = 'bold 22px "Segoe UI", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillStyle = labelPulseColors[giftLabelColorIdx];
-      ctx.fillText('CLICK TO OPEN', giftGX, giftGY + 53);
+      ctx.fillText('CLICK TO OPEN', giftGX, giftGY + 103);
     } else if (giftRevealed) {
       const r = giftRevealed;
       // Burst particles
@@ -593,8 +658,8 @@ function celebrate() {
         const p = giftBurst[pi];
         p.x += p.dx; p.y += p.dy; p.dx *= 0.94; p.dy *= 0.94; p.life--;
         if (p.life <= 0) { giftBurst.splice(pi, 1); continue; }
-        ctx.shadowColor = p.color; ctx.shadowBlur = 6;
-        ctx.fillStyle = p.color; ctx.globalAlpha = p.life / 35;
+        ctx.shadowColor = p.color; ctx.shadowBlur = 8;
+        ctx.fillStyle = p.color; ctx.globalAlpha = p.life / 45;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 2 * Math.PI); ctx.fill();
       }
       ctx.globalAlpha = 1; ctx.shadowBlur = 0;
@@ -604,26 +669,33 @@ function celebrate() {
       ctx.translate(giftGX, giftGY);
       ctx.scale(revealScale, revealScale);
       // Circle background
-      const pulseR = 50 + Math.sin(ringPulse * 2) * 2;
-      ctx.shadowColor = r.bgColor; ctx.shadowBlur = 30;
+      const pulseR = 100 + Math.sin(ringPulse * 2) * 4;
+      ctx.shadowColor = r.bgColor; ctx.shadowBlur = 50;
       ctx.beginPath(); ctx.arc(0, 0, pulseR, 0, 2 * Math.PI);
       ctx.fillStyle = r.bgColor; ctx.fill();
-      ctx.strokeStyle = 'white'; ctx.lineWidth = 4; ctx.stroke();
+      ctx.strokeStyle = 'white'; ctx.lineWidth = 6; ctx.stroke();
       ctx.shadowBlur = 0;
-      // Gift emoji
-      ctx.font = '60px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 15;
-      ctx.fillText(r.emoji, 0, 0);
+      // Gift content
+      const isCustom = typeof r.emoji === 'string' && r.emoji.startsWith('_');
+      if (isCustom) {
+        ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 20;
+        drawCustomGift(ctx, r.emoji, 120);
+      } else {
+        ctx.font = '120px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 20;
+        ctx.fillText(r.emoji, 0, 0);
+      }
       ctx.shadowBlur = 0;
       ctx.restore();
       // "You got a..." text (not scaled, just bounces)
       ctx.save();
-      const bounceY = Math.sin(ringPulse * 3) * 3;
-      ctx.font = 'bold 14px "Segoe UI", sans-serif';
+      const bounceY = Math.sin(ringPulse * 3) * 4;
+      const label = r.emoji.startsWith('_') ? CUSTOM_GIFT_NAMES[r.emoji] : ('a ' + r.emoji);
+      ctx.font = 'bold 24px "Segoe UI", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = r.bgColor; ctx.shadowColor = r.bgColor; ctx.shadowBlur = 10;
-      ctx.fillText('You got a ' + r.emoji + '!', giftGX, giftGY + 68 + bounceY);
+      ctx.fillStyle = r.bgColor; ctx.shadowColor = r.bgColor; ctx.shadowBlur = 15;
+      ctx.fillText('You got ' + label + '!', giftGX, giftGY + 135 + bounceY);
       ctx.shadowBlur = 0; ctx.restore();
     }
 
@@ -662,14 +734,14 @@ function openGift() {
   const bgColor = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
   giftRevealed = { emoji, bgColor };
   giftBurst = [];
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 70; i++) {
     const a = Math.random() * 360;
-    const spd = 3 + Math.random() * 6;
+    const spd = 4 + Math.random() * 10;
     giftBurst.push({
       x: giftGX, y: giftGY,
       dx: spd * Math.cos(a * Math.PI / 180), dy: spd * Math.sin(a * Math.PI / 180),
-      life: 35, color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-      sz: 2 + Math.random() * 4,
+      life: 45, color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+      sz: 3 + Math.random() * 6,
     });
   }
 }
