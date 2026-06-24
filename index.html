@@ -14,80 +14,80 @@ body {
   min-height: 100vh;
 }
 #app {
-  width: 520px; max-width: 95vw;
+  width: 750px; max-width: 95vw;
   background: #f8f9fa;
   position: relative;
 }
 h1 {
-  font-size: 22px; font-weight: 700;
-  margin: 15px 20px 5px; color: #2d3436;
+  font-size: 28px; font-weight: 700;
+  margin: 20px 25px 8px; color: #2d3436;
 }
 #progress-label {
-  font-size: 12px; color: #636e72;
-  margin: 0 20px 2px;
+  font-size: 14px; color: #636e72;
+  margin: 0 25px 4px;
 }
 .progress-wrap {
-  margin: 0 20px 8px; position: relative; height: 26px;
+  margin: 0 25px 10px; position: relative; height: 32px;
 }
 #progress-bar {
-  position: absolute; left: 0; top: 0; width: 100%; height: 26px;
-  border-radius: 4px; background: #e9ecef; overflow: hidden;
+  position: absolute; left: 0; top: 0; width: 100%; height: 32px;
+  border-radius: 6px; background: #e9ecef; overflow: hidden;
 }
 #progress-fill {
-  height: 100%; border-radius: 4px;
+  height: 100%; border-radius: 6px;
   background: linear-gradient(90deg, #f39c12, #f1c40f);
   width: 0%;
 }
 #progress-fill.p40 { background: linear-gradient(90deg, #2ecc71, #27ae60); }
 #progress-fill.p75 { background: linear-gradient(90deg, #27ae60, #1e8449); }
 #progress-shine {
-  position: absolute; top: 0; height: 100%; width: 30px;
+  position: absolute; top: 0; height: 100%; width: 40px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
   display: none;
 }
 #progress-text {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  font-size: 11px; font-weight: 700; color: #495057;
+  font-size: 13px; font-weight: 700; color: #495057;
 }
-.sep { height: 1px; background: #dee2e6; margin: 0 20px; }
+.sep { height: 1px; background: #dee2e6; margin: 0 25px; }
 .list-wrap {
-  margin: 10px 20px; overflow-y: auto; max-height: 220px;
+  margin: 12px 25px; overflow-y: auto; max-height: 280px;
   scrollbar-width: thin;
 }
 .item {
-  display: flex; align-items: center; padding: 3px 0;
+  display: flex; align-items: center; padding: 5px 0;
   background: #f8f9fa; transition: background 0.15s, color 0.15s;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 .item.anim-0 { background: #d4edda; }
 .item.anim-1 { background: #f8f9fa; }
 .item.anim-2 { background: #d4edda; }
 .item.anim-3 { background: #f8f9fa; color: #28a745; text-decoration: line-through; }
 .item label {
-  flex: 1; font-size: 14px; cursor: pointer;
-  display: flex; align-items: center; padding: 4px 6px;
+  flex: 1; font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; padding: 6px 8px;
   user-select: none;
 }
 .item input[type="checkbox"] {
-  width: 18px; height: 18px; margin-right: 8px; cursor: pointer;
+  width: 20px; height: 20px; margin-right: 10px; cursor: pointer;
   accent-color: #28a745;
 }
 .indicator {
-  width: 24px; height: 24px; flex-shrink: 0; margin-left: 4px;
+  width: 28px; height: 28px; flex-shrink: 0; margin-left: 6px;
   position: relative;
 }
 .indicator canvas { display: block; }
 .controls {
-  display: flex; gap: 6px; margin: 0 20px 12px;
+  display: flex; gap: 8px; margin: 0 25px 16px;
 }
 .controls input {
-  flex: 1; padding: 4px 8px; font-size: 13px; border: 1px solid #ccc;
-  border-radius: 4px; outline: none; font-family: inherit;
+  flex: 1; padding: 8px 12px; font-size: 14px; border: 1px solid #ccc;
+  border-radius: 6px; outline: none; font-family: inherit;
 }
 .controls input:focus { border-color: #54a0ff; }
 .controls button {
-  padding: 4px 14px; font-size: 12px; cursor: pointer;
-  border: 1px solid #ccc; border-radius: 4px; background: #fff;
+  padding: 8px 18px; font-size: 13px; cursor: pointer;
+  border: 1px solid #ccc; border-radius: 6px; background: #fff;
   font-family: inherit; white-space: nowrap;
 }
 .controls button:hover { background: #e9ecef; }
@@ -98,7 +98,8 @@ h1 {
   pointer-events: none; z-index: 1000; opacity: 0;
   transition: opacity 0.4s;
 }
-#celebration.active { opacity: 1; pointer-events: auto; }
+#celebration.active { opacity: 1; pointer-events: auto; cursor: default; }
+#celebration.active canvas { cursor: default; }
 #celebration canvas {
   position: absolute; left: 0; top: 0; width: 100%; height: 100%;
   display: block;
@@ -110,18 +111,18 @@ h1 {
 }
 .celeb-ui.active { opacity: 1; pointer-events: auto; }
 .celeb-ui h2 {
-  font-size: 32px; font-weight: 700; margin-bottom: 4px;
+  font-size: 40px; font-weight: 700; margin-bottom: 6px;
   text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
   animation: textPulse 1.5s ease-in-out infinite;
 }
 @keyframes textPulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  50% { transform: scale(1.06); }
 }
-.celeb-ui p { font-size: 14px; color: #636e72; margin-bottom: 12px; }
+.celeb-ui p { font-size: 16px; color: #636e72; margin-bottom: 14px; }
 .celeb-ui button {
-  font-size: 12px; padding: 6px 20px; cursor: pointer;
-  border: 1px solid #ccc; border-radius: 4px; background: #fff;
+  font-size: 14px; padding: 8px 24px; cursor: pointer;
+  border: 1px solid #ccc; border-radius: 6px; background: #fff;
   font-family: inherit; pointer-events: auto;
 }
 .celeb-ui button:hover { background: #e9ecef; }
@@ -158,7 +159,7 @@ h1 {
 
 <script>
 const CONFETTI_COLORS = ["#ff6b6b","#feca57","#48dbfb","#ff9ff3","#54a0ff","#5f27cd","#01a3a4","#ff6348","#00b894","#fd79a8"];
-const GIFTS = ["🍎","🍊","🍬","🍪","🧁","🍫","🍩","🍭","🎁","🌟"];
+const GIFTS = ["🍎","🍊","🍬","🍪","🧁","🍫","🍩","🍭","🎁","🌟","🍰","🥧"];
 const DEFAULT_ITEMS = ["1) Find the property","2) Find area and bldg age","3) Market price","4) Data entry","5) Reply"];
 
 const listEl = document.getElementById('list');
@@ -202,7 +203,7 @@ function addCheckItem(text) {
   const indicator = document.createElement('div');
   indicator.className = 'indicator';
   const ic = document.createElement('canvas');
-  ic.width = 24; ic.height = 24;
+  ic.width = 28; ic.height = 28;
   indicator.appendChild(ic);
   div.appendChild(indicator);
   listEl.appendChild(div);
@@ -249,64 +250,48 @@ function animateIndicator(entry, step, loop) {
   if (loop === undefined) loop = 0;
   if (!entry.cb.checked) { entry._indTimer = null; return; }
   const ic = entry.ic;
+  const c2 = ic.getContext('2d');
+  c2.clearRect(0, 0, 28, 28);
   if (step === 0) {
-    drawIndicator(ic, (c) => {
-      c.beginPath(); c.arc(12,12,9,0,2*Math.PI);
-      c.strokeStyle = '#e74c3c'; c.lineWidth = 2; c.stroke();
-      c.beginPath(); c.moveTo(7,12); c.lineTo(17,12);
-      c.strokeStyle = '#e74c3c'; c.lineWidth = 1.5; c.stroke();
-      c.beginPath(); c.moveTo(12,7); c.lineTo(12,17);
-      c.stroke(); c.closePath();
-    });
+    c2.beginPath(); c2.arc(14,14,11,0,2*Math.PI);
+    c2.strokeStyle = '#e74c3c'; c2.lineWidth = 2; c2.stroke();
+    c2.beginPath(); c2.moveTo(8,14); c2.lineTo(20,14);
+    c2.strokeStyle = '#e74c3c'; c2.lineWidth = 1.5; c2.stroke();
+    c2.beginPath(); c2.moveTo(14,8); c2.lineTo(14,20);
+    c2.stroke(); c2.closePath();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 1), 180);
   } else if (step === 1) {
-    drawIndicator(ic, (c) => {
-      c.beginPath(); c.arc(12,12,9,0,2*Math.PI);
-      c.strokeStyle = '#e74c3c'; c.lineWidth = 2; c.stroke();
-      c.beginPath(); c.moveTo(4,4); c.lineTo(20,20);
-      c.strokeStyle = '#c0392b'; c.lineWidth = 3; c.lineCap = 'round'; c.stroke();
-    });
+    c2.beginPath(); c2.arc(14,14,11,0,2*Math.PI);
+    c2.strokeStyle = '#e74c3c'; c2.lineWidth = 2; c2.stroke();
+    c2.beginPath(); c2.moveTo(5,5); c2.lineTo(23,23);
+    c2.strokeStyle = '#c0392b'; c2.lineWidth = 3; c2.lineCap = 'round'; c2.stroke();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 2), 150);
   } else if (step === 2) {
-    drawIndicator(ic, (c) => {
-      c.beginPath(); c.moveTo(20,4); c.lineTo(4,20);
-      c.strokeStyle = '#c0392b'; c.lineWidth = 2.5; c.lineCap = 'round'; c.stroke();
-      c.beginPath(); c.moveTo(4,4); c.lineTo(20,20);
-      c.strokeStyle = '#c0392b'; c.lineWidth = 2.5; c.stroke();
-    });
+    c2.beginPath(); c2.moveTo(23,5); c2.lineTo(5,23);
+    c2.strokeStyle = '#c0392b'; c2.lineWidth = 2.5; c2.lineCap = 'round'; c2.stroke();
+    c2.beginPath(); c2.moveTo(5,5); c2.lineTo(23,23);
+    c2.strokeStyle = '#c0392b'; c2.lineWidth = 2.5; c2.stroke();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 3), 150);
   } else if (step === 3) {
-    drawIndicator(ic, (c) => {
-      c.beginPath(); c.arc(12,12,7,0,2*Math.PI);
-      c.fillStyle = '#f39c12'; c.fill();
-    });
+    c2.beginPath(); c2.arc(14,14,9,0,2*Math.PI);
+    c2.fillStyle = '#f39c12'; c2.fill();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 4), 120);
   } else if (step === 4) {
-    drawIndicator(ic, (c) => {
-      c.beginPath(); c.arc(12,12,10,0,2*Math.PI);
-      c.fillStyle = '#28a745'; c.fill();
-      c.beginPath(); c.moveTo(7,13); c.lineTo(11,17); c.lineTo(21,7);
-      c.strokeStyle = 'white'; c.lineWidth = 2.5; c.lineCap = 'round'; c.lineJoin = 'round'; c.stroke();
-    });
+    c2.beginPath(); c2.arc(14,14,12,0,2*Math.PI);
+    c2.fillStyle = '#28a745'; c2.fill();
+    c2.beginPath(); c2.moveTo(8,15); c2.lineTo(13,20); c2.lineTo(24,9);
+    c2.strokeStyle = 'white'; c2.lineWidth = 2.5; c2.lineCap = 'round'; c2.lineJoin = 'round'; c2.stroke();
     entry._indTimer = setTimeout(() => animateIndicator(entry, 5, 0), 250);
   } else if (step === 5) {
     const pad = loop % 2 === 0 ? 1 : 3;
-    drawIndicator(ic, (c) => {
-      c.beginPath(); c.arc(12,12,12-pad,0,2*Math.PI);
-      c.fillStyle = '#28a745'; c.fill();
-      c.beginPath(); c.moveTo(7,13); c.lineTo(11,17); c.lineTo(21,7);
-      c.strokeStyle = 'white'; c.lineWidth = 2.5; c.lineCap = 'round'; c.lineJoin = 'round'; c.stroke();
-    });
+    c2.beginPath(); c2.arc(14,14,14-pad,0,2*Math.PI);
+    c2.fillStyle = '#28a745'; c2.fill();
+    c2.beginPath(); c2.moveTo(8,15); c2.lineTo(13,20); c2.lineTo(24,9);
+    c2.strokeStyle = 'white'; c2.lineWidth = 2.5; c2.lineCap = 'round'; c2.lineJoin = 'round'; c2.stroke();
     if (loop < 6) {
       entry._indTimer = setTimeout(() => animateIndicator(entry, 5, loop + 1), 200);
     }
   }
-}
-
-function drawIndicator(canvas, drawFn) {
-  const c = canvas.getContext('2d');
-  c.clearRect(0, 0, 24, 24);
-  drawFn(c);
 }
 
 // ---- Progress ----
@@ -369,7 +354,6 @@ function checkAllDone() {
   if (items.every(i => i.cb.checked)) celebrate();
 }
 
-// State for celebration effects
 let confetti = [];
 let ringAngle = 0;
 let ringPulse = 0;
@@ -379,10 +363,12 @@ let colorIdx = 0;
 let giftRevealed = null;
 let giftBurst = [];
 let giftPulse = 0;
+let giftLabelColorIdx = 0;
 let envW = 0, envH = 0, envCX = 0, envCY = 0;
 let giftGX = 0, giftGY = 0;
 
 const colorTextColors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6'];
+const labelPulseColors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6','#e74c3c'];
 
 function drawStar(ctx, cx, cy, r) {
   ctx.beginPath();
@@ -392,6 +378,12 @@ function drawStar(ctx, cx, cy, r) {
     ctx[method](cx + r * Math.cos(a), cy + r * Math.sin(a));
   }
   ctx.closePath();
+}
+
+function isInsideGift(mx, my) {
+  const dx = mx - giftGX;
+  const dy = my - giftGY;
+  return Math.abs(dx) < 65 && dy > -45 && dy < 60;
 }
 
 function celebrate() {
@@ -404,42 +396,39 @@ function celebrate() {
   ringAngle = 0;
   ringPulse = 0;
   colorIdx = 0;
+  giftPulse = 0;
+  giftLabelColorIdx = 0;
 
   envW = window.innerWidth;
   envH = window.innerHeight;
   envCX = envW / 2;
   envCY = envH / 2 - 30;
-  giftGX = envW / 2 + 130;
-  giftGY = envH / 2 - 60;
+  giftGX = envW / 2 + 160;
+  giftGY = envH / 2 - 70;
   giftPos = { x: giftGX, y: giftGY };
 
   celebCanvas.width = envW;
   celebCanvas.height = envH;
 
-  // Confetti: 200 particles with rotation
+  // Confetti: 250 particles
   confetti = [];
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 250; i++) {
     confetti.push({
-      x: Math.random() * envW,
-      y: Math.random() * -envH,
-      w: 4 + Math.random() * 6,
-      h: 6 + Math.random() * 8,
-      dx: (Math.random() - 0.5) * 3,
-      dy: 0.8 + Math.random() * 2.5,
+      x: Math.random() * envW, y: Math.random() * -envH,
+      w: 4 + Math.random() * 6, h: 6 + Math.random() * 10,
+      dx: (Math.random() - 0.5) * 3, dy: 0.8 + Math.random() * 2.5,
       gravity: 0.04 + Math.random() * 0.08,
-      rot: Math.random() * 360,
-      rotSpeed: (Math.random() - 0.5) * 8,
+      rot: Math.random() * 360, rotSpeed: (Math.random() - 0.5) * 8,
       color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
       shape: Math.random() < 0.3 ? 'star' : (Math.random() < 0.5 ? 'rect' : 'circle'),
       wind: (Math.random() - 0.5) * 0.3,
     });
   }
 
-  // Ring layers
   const ringLayers = [
-    { count: 10, radius: 65, speed: 18, c1: '#feca57', c2: '#e67e22', sz1: 6, sz2: 4 },
-    { count: 14, radius: 100, speed: -12, c1: '#ff9ff3', c2: '#e84393', sz1: 5, sz2: 3 },
-    { count: 8, radius: 135, speed: 22, c1: '#48dbfb', c2: '#0abde3', sz1: 7, sz2: 4 },
+    { count: 10, radius: 75, speed: 18, c1: '#feca57', c2: '#e67e22', sz1: 6, sz2: 4 },
+    { count: 14, radius: 115, speed: -12, c1: '#ff9ff3', c2: '#e84393', sz1: 5, sz2: 3 },
+    { count: 8, radius: 155, speed: 22, c1: '#48dbfb', c2: '#0abde3', sz1: 7, sz2: 4 },
   ];
 
   fireworkBursts = [];
@@ -457,103 +446,76 @@ function celebrate() {
       const spd = 2 + Math.random() * 5;
       burst.push({
         x: bx, y: by, dx: spd * Math.cos(a * Math.PI / 180), dy: spd * Math.sin(a * Math.PI / 180),
-        life: 40 + Math.floor(Math.random() * 15),
-        maxLife: 50, color, sz: 2 + Math.random() * 3,
-        trail: [],
-        hueShift: (Math.random() - 0.5) * 40,
+        life: 40 + Math.floor(Math.random() * 15), maxLife: 50, color, sz: 2 + Math.random() * 3,
+        trail: [], hueShift: (Math.random() - 0.5) * 40,
       });
     }
-    // Secondary crackle sparks
     for (let i = 0; i < 10; i++) {
       const a = Math.random() * 360;
       const spd = 4 + Math.random() * 4;
       burst.push({
         x: bx, y: by, dx: spd * Math.cos(a * Math.PI / 180), dy: spd * Math.sin(a * Math.PI / 180),
-        life: 15 + Math.floor(Math.random() * 10),
-        maxLife: 25, color: '#ffffff', sz: 1 + Math.random() * 2,
+        life: 15 + Math.floor(Math.random() * 10), maxLife: 25, color: '#ffffff', sz: 1 + Math.random() * 2,
         trail: [], hueShift: 0, spark: true,
       });
     }
     fireworkBursts.push(burst);
     timers.push(setTimeout(spawnFirework, 600 + Math.random() * 800));
   }
-
   spawnFirework();
 
-  // Sparkle stars
-  for (let i = 0; i < 8; i++) {
-    sparkles.push(createSparkle());
-  }
+  for (let i = 0; i < 8; i++) sparkles.push(createSparkle());
 
   function createSparkle() {
     return {
-      x: 20 + Math.random() * (envW - 40),
-      y: 20 + Math.random() * (envH - 40),
-      sz: 8 + Math.random() * 14,
-      life: 0, maxLife: 30 + Math.floor(Math.random() * 30),
-      phase: Math.random() * 360,
-      color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+      x: 20 + Math.random() * (envW - 40), y: 20 + Math.random() * (envH - 40),
+      sz: 10 + Math.random() * 16, life: 0, maxLife: 30 + Math.floor(Math.random() * 30),
+      phase: Math.random() * 360, color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
     };
   }
+
+  let frameCount = 0;
 
   function render() {
     if (!celebrating) return;
     ctx.clearRect(0, 0, envW, envH);
+    frameCount++;
 
     // ---- Confetti ----
     for (const p of confetti) {
-      p.x += p.dx + p.wind;
-      p.y += p.dy;
-      p.dy += p.gravity;
-      p.dx *= 0.995;
+      p.x += p.dx + p.wind; p.y += p.dy; p.dy += p.gravity; p.dx *= 0.995;
       p.rot += p.rotSpeed;
       if (p.y > envH + 20) {
         p.x = Math.random() * envW; p.y = -20;
-        p.dy = 0.8 + Math.random() * 2.5;
-        p.dx = (Math.random() - 0.5) * 3;
-        p.gravity = 0.04 + Math.random() * 0.08;
-        p.rot = Math.random() * 360;
+        p.dy = 0.8 + Math.random() * 2.5; p.dx = (Math.random() - 0.5) * 3;
+        p.gravity = 0.04 + Math.random() * 0.08; p.rot = Math.random() * 360;
       }
       ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot * Math.PI / 180);
-      ctx.globalAlpha = 0.85;
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur = 6;
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+      ctx.globalAlpha = 0.85; ctx.shadowColor = p.color; ctx.shadowBlur = 6;
       ctx.fillStyle = p.color;
-      if (p.shape === 'rect') {
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-      } else if (p.shape === 'star') {
-        drawStar(ctx, 0, 0, p.w);
-        ctx.fill();
-      } else {
-        ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, 2 * Math.PI); ctx.fill();
-      }
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = 1;
-      ctx.restore();
+      if (p.shape === 'rect') ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      else if (p.shape === 'star') { drawStar(ctx, 0, 0, p.w); ctx.fill(); }
+      else { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, 2 * Math.PI); ctx.fill(); }
+      ctx.shadowBlur = 0; ctx.globalAlpha = 1; ctx.restore();
     }
 
-    // ---- Rings with glow ----
+    // ---- Rings ----
     ctx.globalAlpha = 0.9;
     for (const layer of ringLayers) {
       for (let i = 0; i < layer.count; i++) {
         const a = (ringAngle * layer.speed / 15 + (360 / layer.count) * i) * Math.PI / 180;
         const rx = envCX + layer.radius * Math.cos(a);
         const ry = envCY + layer.radius * Math.sin(a);
-        const isEven = i % 2 === 0;
-        const color = isEven ? layer.c1 : layer.c2;
-        const sz = (isEven ? layer.sz1 : layer.sz2) + Math.sin(ringPulse + i) * 1.5;
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 12;
+        const color = i % 2 === 0 ? layer.c1 : layer.c2;
+        const sz = (i % 2 === 0 ? layer.sz1 : layer.sz2) + Math.sin(ringPulse + i) * 1.5;
+        ctx.shadowColor = color; ctx.shadowBlur = 12;
         ctx.fillStyle = color;
         ctx.beginPath(); ctx.arc(rx, ry, Math.max(sz, 1), 0, 2 * Math.PI); ctx.fill();
       }
     }
-    ctx.shadowBlur = 0;
-    ctx.globalAlpha = 1;
-    ringAngle += 1;
-    ringPulse += 0.03;
+    ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+    ringAngle += 1; ringPulse += 0.03;
 
     // ---- Fireworks ----
     for (let bi = fireworkBursts.length - 1; bi >= 0; bi--) {
@@ -562,190 +524,144 @@ function celebrate() {
         const p = burst[pi];
         p.trail.push({ x: p.x, y: p.y });
         if (p.trail.length > 5) p.trail.shift();
-        p.x += p.dx; p.y += p.dy;
-        p.dx *= 0.96; p.dy *= 0.96;
-        p.life--;
+        p.x += p.dx; p.y += p.dy; p.dx *= 0.96; p.dy *= 0.96; p.life--;
         const progress = 1 - p.life / p.maxLife;
         if (p.life <= 0) { burst.splice(pi, 1); continue; }
-        // Trail
         for (let ti = 0; ti < p.trail.length; ti++) {
           const t = p.trail[ti];
-          const alpha = (ti / p.trail.length) * 0.5;
-          ctx.globalAlpha = alpha;
-          ctx.shadowBlur = 0;
-          ctx.fillStyle = p.spark ? '#ffffff' : p.color;
+          ctx.globalAlpha = (ti / p.trail.length) * 0.5;
+          ctx.shadowBlur = 0; ctx.fillStyle = p.spark ? '#ffffff' : p.color;
           ctx.beginPath(); ctx.arc(t.x, t.y, p.sz * 0.5, 0, 2 * Math.PI); ctx.fill();
         }
-        ctx.globalAlpha = 1;
-        ctx.shadowColor = p.color;
+        ctx.globalAlpha = 1; ctx.shadowColor = p.color;
         ctx.shadowBlur = p.spark ? 4 : 10;
         ctx.fillStyle = p.spark ? '#ffffff' : p.color;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.sz * (1 - progress * 0.4), 0, 2 * Math.PI); ctx.fill();
       }
       if (burst.length === 0) fireworkBursts.splice(bi, 1);
     }
-    ctx.shadowBlur = 0;
-    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0; ctx.globalAlpha = 1;
 
-    // ---- Sparkles (twinkling 4-point stars) ----
+    // ---- Sparkles ----
     for (let si = sparkles.length - 1; si >= 0; si--) {
       const s = sparkles[si];
       s.life++;
-      if (s.life > s.maxLife) {
-        sparkles.splice(si, 1);
-        sparkles.push(createSparkle());
-        continue;
-      }
+      if (s.life > s.maxLife) { sparkles.splice(si, 1); sparkles.push(createSparkle()); continue; }
       const alpha = Math.sin(s.life * 0.15 + s.phase) * 0.5 + 0.5;
-      ctx.save();
-      ctx.translate(s.x, s.y);
-      ctx.globalAlpha = alpha * 0.85;
-      ctx.shadowColor = s.color;
-      ctx.shadowBlur = 12;
-      ctx.fillStyle = s.color;
-      // 4-point star
-      const r = s.sz;
-      ctx.beginPath();
+      ctx.save(); ctx.translate(s.x, s.y); ctx.globalAlpha = alpha * 0.85;
+      ctx.shadowColor = s.color; ctx.shadowBlur = 12; ctx.fillStyle = s.color;
+      const r = s.sz; ctx.beginPath();
       for (let i = 0; i < 4; i++) {
         const a = (i * Math.PI / 2) - Math.PI / 2;
-        const ax = r * Math.cos(a);
-        const ay = r * Math.sin(a);
-        if (i === 0) ctx.moveTo(ax, ay);
-        else ctx.lineTo(ax, ay);
+        const ax = r * Math.cos(a), ay = r * Math.sin(a);
+        if (i === 0) ctx.moveTo(ax, ay); else ctx.lineTo(ax, ay);
         const innerA = a + Math.PI / 4;
         ctx.lineTo(r * 0.3 * Math.cos(innerA), r * 0.3 * Math.sin(innerA));
       }
-      ctx.closePath(); ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = 1;
-      ctx.restore();
+      ctx.closePath(); ctx.fill(); ctx.shadowBlur = 0; ctx.globalAlpha = 1; ctx.restore();
     }
 
-    // ---- Gift ----
+    // ---- Gift Box ----
     if (!giftOpened) {
-      giftPulse += 0.04;
+      giftPulse += 0.03;
       const scale = 1 + Math.sin(giftPulse) * 0.04;
+      // Emoji
       ctx.save();
-      ctx.translate(giftGX, giftGY);
-      ctx.scale(scale, scale);
-      ctx.shadowColor = '#f39c12';
-      ctx.shadowBlur = 20;
-      ctx.font = '64px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+      ctx.translate(giftGX, giftGY); ctx.scale(scale, scale);
+      ctx.shadowColor = '#f39c12'; ctx.shadowBlur = 25;
+      ctx.font = '72px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#f39c12';
-      ctx.fillText('🎁', 0, 0);
-      ctx.shadowBlur = 0;
-      ctx.restore();
-
-      // BG pill with glow
+      ctx.fillStyle = '#f39c12'; ctx.fillText('🎁', 0, 0);
+      ctx.shadowBlur = 0; ctx.restore();
+      // Label pill
       ctx.save();
-      ctx.shadowColor = '#2d3436';
-      ctx.shadowBlur = 8;
+      ctx.shadowColor = '#2d3436'; ctx.shadowBlur = 8;
       ctx.fillStyle = '#2d3436';
-      const rrx = giftGX - 65, rry = giftGY + 32, rrw = 130, rrh = 26;
-      ctx.beginPath(); ctx.roundRect(rrx, rry, rrw, rrh, 13); ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.restore();
-
-      // Label with pulse color
-      ctx.font = 'bold 11px "Segoe UI", sans-serif';
+      const rrx = giftGX - 75, rry = giftGY + 38, rrw = 150, rrh = 30;
+      ctx.beginPath(); ctx.roundRect(rrx, rry, rrw, rrh, 15); ctx.fill();
+      ctx.shadowBlur = 0; ctx.restore();
+      // Label text (pulse every 8 frames ~7fps)
+      if (frameCount % 8 === 0) giftLabelColorIdx = (giftLabelColorIdx + 1) % labelPulseColors.length;
+      ctx.font = 'bold 13px "Segoe UI", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = colorTextColors[Math.floor(Math.random() * colorTextColors.length)];
-      ctx.fillText('CLICK TO OPEN', giftGX, giftGY + 45);
+      ctx.fillStyle = labelPulseColors[giftLabelColorIdx];
+      ctx.fillText('CLICK TO OPEN', giftGX, giftGY + 53);
     } else if (giftRevealed) {
       const r = giftRevealed;
       // Burst particles
       for (let pi = giftBurst.length - 1; pi >= 0; pi--) {
         const p = giftBurst[pi];
-        p.x += p.dx; p.y += p.dy;
-        p.dx *= 0.94; p.dy *= 0.94;
-        p.life--;
+        p.x += p.dx; p.y += p.dy; p.dx *= 0.94; p.dy *= 0.94; p.life--;
         if (p.life <= 0) { giftBurst.splice(pi, 1); continue; }
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 6;
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.life / 35;
+        ctx.shadowColor = p.color; ctx.shadowBlur = 6;
+        ctx.fillStyle = p.color; ctx.globalAlpha = p.life / 35;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 2 * Math.PI); ctx.fill();
       }
-      ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
-
-      // Revealed circle with glow
-      const pulseR = 45 + Math.sin(ringPulse * 2) * 2;
-      ctx.shadowColor = r.bgColor;
-      ctx.shadowBlur = 25;
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+      // Circle background
+      const pulseR = 50 + Math.sin(ringPulse * 2) * 2;
+      ctx.shadowColor = r.bgColor; ctx.shadowBlur = 30;
       ctx.beginPath(); ctx.arc(giftGX, giftGY, pulseR, 0, 2 * Math.PI);
-      ctx.fillStyle = r.bgColor;
-      ctx.fill();
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = 3;
-      ctx.stroke();
+      ctx.fillStyle = r.bgColor; ctx.fill();
+      ctx.strokeStyle = 'white'; ctx.lineWidth = 4; ctx.stroke();
       ctx.shadowBlur = 0;
-
       // Gift emoji
-      ctx.font = '56px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+      ctx.font = '60px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = '#ffffff';
-      ctx.shadowBlur = 15;
+      ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 15;
       ctx.fillText(r.emoji, giftGX, giftGY);
       ctx.shadowBlur = 0;
-
       // "You got a..." text
       ctx.save();
       const bounceY = Math.sin(ringPulse * 3) * 3;
-      ctx.font = 'bold 13px "Segoe UI", sans-serif';
+      ctx.font = 'bold 14px "Segoe UI", sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = r.bgColor;
-      ctx.shadowColor = r.bgColor;
-      ctx.shadowBlur = 10;
-      ctx.fillText('You got a ' + r.emoji + '!', giftGX, giftGY + 55 + bounceY);
-      ctx.shadowBlur = 0;
-      ctx.restore();
+      ctx.fillStyle = r.bgColor; ctx.shadowColor = r.bgColor; ctx.shadowBlur = 10;
+      ctx.fillText('You got a ' + r.emoji + '!', giftGX, giftGY + 62 + bounceY);
+      ctx.shadowBlur = 0; ctx.restore();
     }
 
-    // ---- Text color cycling ----
-    allDoneText.style.color = colorTextColors[colorIdx % colorTextColors.length];
-    colorIdx = (colorIdx + 1) % colorTextColors.length;
+    // ---- Text color cycling (every 12 frames ~5fps) ----
+    if (frameCount % 12 === 0) colorIdx = (colorIdx + 1) % colorTextColors.length;
+    allDoneText.style.color = colorTextColors[colorIdx];
 
     animFrameId = requestAnimationFrame(render);
   }
 
   render();
-
-  // Auto reset after 30s
   const autoResetTimer = setTimeout(resetAll, 30000);
   timers.push(autoResetTimer);
 }
 
 // ---- Gift click handling ----
+celebCanvas.addEventListener('mousemove', (e) => {
+  if (!celebrating || giftOpened) { celebCanvas.style.cursor = 'default'; return; }
+  const rect = celebCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  celebCanvas.style.cursor = isInsideGift(mx, my) ? 'pointer' : 'default';
+});
+
 celebCanvas.addEventListener('click', (e) => {
-  if (!celebrating || giftOpened || !giftPos) return;
-  const mx = e.offsetX;
-  const my = e.offsetY;
-  const dx = mx - giftPos.x;
-  const dy = my - giftPos.y;
-  // Check within the gift area: emoji (~35px radius) + label area (~55px down)
-  if (Math.abs(dx) < 45 && dy > -40 && dy < 55) openGift();
+  if (!celebrating || giftOpened) return;
+  const rect = celebCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  if (isInsideGift(mx, my)) openGift();
 });
 
 function openGift() {
   giftOpened = true;
-  const gx = giftPos.x, gy = giftPos.y;
   const emoji = GIFTS[Math.floor(Math.random() * GIFTS.length)];
   const bgColor = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
-
   giftRevealed = { emoji, bgColor };
-
-  // Burst particles
   giftBurst = [];
-  for (let i = 0; i < 35; i++) {
+  for (let i = 0; i < 40; i++) {
     const a = Math.random() * 360;
     const spd = 3 + Math.random() * 6;
     giftBurst.push({
-      x: gx, y: gy,
-      dx: spd * Math.cos(a * Math.PI / 180),
-      dy: spd * Math.sin(a * Math.PI / 180),
+      x: giftGX, y: giftGY,
+      dx: spd * Math.cos(a * Math.PI / 180), dy: spd * Math.sin(a * Math.PI / 180),
       life: 35, color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
       sz: 2 + Math.random() * 4,
     });
@@ -762,18 +678,16 @@ function resetAll() {
   for (const t of timers) { clearTimeout(t); clearInterval(t); }
   timers = [];
   ctx.clearRect(0, 0, celebCanvas.width, celebCanvas.height);
-  confetti = [];
-  fireworkBursts = [];
-  sparkles = [];
-  giftBurst = [];
-  giftRevealed = null;
+  celebCanvas.style.cursor = 'default';
+  confetti = []; fireworkBursts = []; sparkles = []; giftBurst = []; giftRevealed = null;
   progressCurrent = 0; progressTarget = 0;
   for (const entry of items) {
     clearAnimTimers(entry);
     entry.cb.checked = false;
     entry.div.className = 'item';
     entry.cb.style.accentColor = '#28a745';
-    drawIndicator(entry.ic, () => {});
+    const c2 = entry.ic.getContext('2d');
+    c2.clearRect(0, 0, 28, 28);
   }
   updateProgress();
   drawProgressBar();
@@ -792,8 +706,7 @@ newItemInput.addEventListener('keydown', (e) => {
 removeBtn.addEventListener('click', () => {
   for (let i = items.length - 1; i >= 0; i--) {
     if (items[i].cb.checked) {
-      const entry = items[i];
-      entry.div.remove();
+      items[i].div.remove();
       items.splice(i, 1);
     }
   }
