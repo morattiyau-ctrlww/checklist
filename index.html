@@ -16,7 +16,12 @@ body {
 #app {
   width: 750px; max-width: 95vw;
   background: #f8f9fa;
-  position: relative;
+  position: relative; z-index: 1;
+  border-radius: 16px; padding-top: 4px;
+}
+.top-icon {
+  display: block; width: 100%; height: 80px;
+  border-radius: 12px 12px 0 0;
 }
 h1 {
   font-size: 28px; font-weight: 700;
@@ -130,6 +135,7 @@ h1 {
 </head>
 <body>
 <div id="app">
+  <canvas class="top-icon" id="aurora-canvas" width="750" height="80"></canvas>
   <h1>Valuation Checklist</h1>
   <div id="progress-label">Progress: 0/5</div>
   <div class="progress-wrap">
@@ -144,7 +150,6 @@ h1 {
   <div class="controls">
     <input type="text" id="new-item" placeholder="New item..." />
     <button id="add-btn">Add</button>
-    <button id="remove-btn">Remove Done</button>
   </div>
 </div>
 
@@ -173,7 +178,7 @@ const progressText = document.getElementById('progress-text');
 const progressLabel = document.getElementById('progress-label');
 const newItemInput = document.getElementById('new-item');
 const addBtn = document.getElementById('add-btn');
-const removeBtn = document.getElementById('remove-btn');
+
 const celebrationEl = document.getElementById('celebration');
 const celebCanvas = document.getElementById('celeb-canvas');
 const celebUi = document.getElementById('celeb-ui');
@@ -370,6 +375,15 @@ let giftPulse = 0;
 let giftLabelColorIdx = 0;
 let envW = 0, envH = 0, envCX = 0, envCY = 0;
 let giftGX = 0, giftGY = 0;
+let giftDragging = false;
+let giftDragStartX = 0, giftDragStartY = 0;
+let giftDragDist = 0;
+
+function giftPointerPos(e) {
+  const rect = celebCanvas.getBoundingClientRect();
+  if (e.touches) return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
 
 const colorTextColors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6'];
 const labelPulseColors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6','#e74c3c'];
@@ -711,21 +725,74 @@ function celebrate() {
   timers.push(autoResetTimer);
 }
 
-// ---- Gift click handling ----
+// ---- Gift drag + click handling ----
 celebCanvas.addEventListener('mousemove', (e) => {
-  if (!celebrating || giftOpened) { celebCanvas.style.cursor = 'default'; return; }
-  const rect = celebCanvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  celebCanvas.style.cursor = isInsideGift(mx, my) ? 'pointer' : 'default';
+  if (!celebrating) { celebCanvas.style.cursor = 'default'; return; }
+  if (giftDragging) {
+    const pos = giftPointerPos(e);
+    const dx = pos.x - giftDragStartX;
+    const dy = pos.y - giftDragStartY;
+    giftDragDist += Math.abs(dx) + Math.abs(dy);
+    giftGX = Math.max(0, Math.min(envW, giftGX + dx));
+    giftGY = Math.max(0, Math.min(envH, giftGY + dy));
+    giftDragStartX = pos.x;
+    giftDragStartY = pos.y;
+    return;
+  }
+  const pos = giftPointerPos(e);
+  celebCanvas.style.cursor = isInsideGift(pos.x, pos.y) ? 'grab' : 'default';
 });
 
-celebCanvas.addEventListener('click', (e) => {
-  if (!celebrating || giftOpened) return;
-  const rect = celebCanvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  if (isInsideGift(mx, my)) openGift();
+celebCanvas.addEventListener('mousedown', (e) => {
+  if (!celebrating) return;
+  const pos = giftPointerPos(e);
+  if (!isInsideGift(pos.x, pos.y)) return;
+  giftDragging = true;
+  giftDragStartX = pos.x;
+  giftDragStartY = pos.y;
+  giftDragDist = 0;
+  celebCanvas.style.cursor = 'grabbing';
+});
+
+celebCanvas.addEventListener('mouseup', (e) => {
+  if (!giftDragging) return;
+  giftDragging = false;
+  celebCanvas.style.cursor = 'grab';
+  if (giftDragDist < 10 && !giftOpened) openGift();
+});
+
+celebCanvas.addEventListener('mouseleave', () => {
+  if (giftDragging) { giftDragging = false; celebCanvas.style.cursor = 'default'; }
+});
+
+// Touch events for mobile
+celebCanvas.addEventListener('touchstart', (e) => {
+  if (!celebrating) return;
+  const pos = giftPointerPos(e);
+  if (!isInsideGift(pos.x, pos.y)) return;
+  giftDragging = true;
+  giftDragStartX = pos.x;
+  giftDragStartY = pos.y;
+  giftDragDist = 0;
+}, { passive: true });
+
+celebCanvas.addEventListener('touchmove', (e) => {
+  if (!giftDragging) return;
+  e.preventDefault();
+  const pos = giftPointerPos(e);
+  const dx = pos.x - giftDragStartX;
+  const dy = pos.y - giftDragStartY;
+  giftDragDist += Math.abs(dx) + Math.abs(dy);
+  giftGX = Math.max(0, Math.min(envW, giftGX + dx));
+  giftGY = Math.max(0, Math.min(envH, giftGY + dy));
+  giftDragStartX = pos.x;
+  giftDragStartY = pos.y;
+}, { passive: false });
+
+celebCanvas.addEventListener('touchend', () => {
+  if (!giftDragging) return;
+  giftDragging = false;
+  if (giftDragDist < 10 && !giftOpened) openGift();
 });
 
 function openGift() {
@@ -757,6 +824,7 @@ function resetAll() {
   timers = [];
   ctx.clearRect(0, 0, celebCanvas.width, celebCanvas.height);
   celebCanvas.style.cursor = 'default';
+  giftDragging = false;
   confetti = []; fireworkBursts = []; sparkles = []; giftBurst = []; giftRevealed = null;
   progressCurrent = 0; progressTarget = 0;
   for (const entry of items) {
@@ -781,21 +849,53 @@ addBtn.addEventListener('click', () => {
 newItemInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') addBtn.click();
 });
-removeBtn.addEventListener('click', () => {
-  for (let i = items.length - 1; i >= 0; i--) {
-    if (items[i].cb.checked) {
-      items[i].div.remove();
-      items.splice(i, 1);
-    }
-  }
-  updateProgress();
-});
 
 // ---- Init ----
 for (const text of DEFAULT_ITEMS) addCheckItem(text);
 updateProgress();
 drawProgressBar();
 animateProgressShine();
+
+// ---- Aurora banner ----
+(function() {
+  const canvas = document.getElementById('aurora-canvas');
+  const ctx = canvas.getContext('2d');
+  let W = canvas.width, H = canvas.height;
+  const waves = [
+    { amp: 12, freq: 0.018, speed: 0.5, offsetY: 0.3, color: [99,102,241], alpha: 0.5 },
+    { amp: 16, freq: 0.025, speed: -0.6, offsetY: 0.45, color: [168,85,247], alpha: 0.45 },
+    { amp: 10, freq: 0.03, speed: 0.7, offsetY: 0.6, color: [236,72,153], alpha: 0.35 },
+    { amp: 14, freq: 0.02, speed: -0.4, offsetY: 0.7, color: [6,182,212], alpha: 0.3 },
+    { amp: 8, freq: 0.035, speed: 0.55, offsetY: 0.5, color: [251,191,36], alpha: 0.2 },
+  ];
+  let time = 0;
+  function drawAurora() {
+    time += 0.02;
+    ctx.clearRect(0, 0, W, H);
+    for (const w of waves) {
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      for (let x = 0; x <= W; x += 3) {
+        const y = H * w.offsetY
+          + Math.sin(x * w.freq + time * w.speed) * w.amp
+          + Math.sin(x * w.freq * 2.3 + time * w.speed * 1.4) * w.amp * 0.4
+          + Math.sin(x * w.freq * 0.5 + time * w.speed * 0.7) * w.amp * 0.6;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H);
+      ctx.closePath();
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, `rgba(${w.color[0]},${w.color[1]},${w.color[2]},0)`);
+      grad.addColorStop(0.3, `rgba(${w.color[0]},${w.color[1]},${w.color[2]},${w.alpha})`);
+      grad.addColorStop(0.7, `rgba(${w.color[0]},${w.color[1]},${w.color[2]},${w.alpha * 0.5})`);
+      grad.addColorStop(1, `rgba(${w.color[0]},${w.color[1]},${w.color[2]},0)`);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+    requestAnimationFrame(drawAurora);
+  }
+  drawAurora();
+})();
 </script>
 </body>
 </html>
